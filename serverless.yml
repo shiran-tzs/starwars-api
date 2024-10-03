@@ -1,0 +1,84 @@
+service: starwars-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: 'us-east-1'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-east-1:058264078790:table/StarWars
+
+
+functions:
+  postCharacter:
+    handler: src/functions/postCharacter.postNewCharacter
+    events:
+      - httpApi:
+          path: /postNewCharacter
+          method: post
+  getKeysInSpanish:
+    handler: src/functions/getKeysInSpanish.getTranslate
+    timeout: 60
+    events:
+      - httpApi:
+          path: /getKeysInSpanish
+          method: get
+  getResources:
+    handler: src/functions/getResources.getTotalPaths
+    events:
+      - httpApi:
+          path: /getResources
+          method: get
+  getStoredCharacters:
+    handler: src/functions/getStoredData.getStoredCharacters
+    events:
+      - httpApi:
+          path: /getStoredCharacters
+          method: get
+  getTotalFilms:
+    handler: src/functions/getResources.getTotalFilms
+    events:
+      - httpApi:
+          path: /getTotalFilms
+          method: get
+  getTotalSpecies:
+    handler: src/functions/getResources.getTotalSpecies
+    events:
+      - httpApi:
+          path: /getTotalSpecies
+          method: get
+  getTotalVehicles:
+    handler: src/functions/getResources.getTotalVehicles
+    events:
+      - httpApi:
+          path: /getTotalVehicles
+          method: get
+  getTotalStarships:
+    handler: src/functions/getResources.getTotalStarships
+    events:
+      - httpApi:
+          path: /getTotalStarships
+          method: get
+
+
+resources:
+  Resources:
+    StarWars:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: StarWarsCharacters
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+plugins:
+  - serverless-auto-swagger
+  - serverless-offline
